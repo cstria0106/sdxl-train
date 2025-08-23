@@ -1,0 +1,8 @@
+/train
+/images
+/models
+*.safetensors
+*.zip
+/.venv
+/.tmp
+/config.yaml
