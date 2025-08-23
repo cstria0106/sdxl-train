@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -lt 2 ]; then
+  echo "Usage: $0 <checkpoint> <name>"
+  exit 1
+fi
+
+name=$(echo "$1" | xargs)
+checkpoint=$(echo "$2" | xargs)
+
+cwd=$(pwd)
+config_dir=$cwd/config
+train_dir=$cwd/train/${name}
+data_dir=$train_dir/data
+model_dir=$train_dir/model
+log_dir=$train_dir/log
+
+if [ ! -f "$checkpoint" ]; then
+  echo "Checkpoint file not found: $checkpoint"
+  exit 1
+fi
+checkpoint=$(realpath "$checkpoint")
+
+if [ -d "$model_dir" ]; then
+  echo "Model directory already exists: $model_dir"
+  exit 1
+fi
+
+cp $config_dir/config.toml $train_dir/config.toml
+cat <<EOF >> $train_dir/config.toml
+pretrained_model_name_or_path = "$checkpoint"
+sample_prompts = "$config_dir/prompt.txt"
+output_name = "$name"
+train_data_dir = "$data_dir"
+output_dir = "$model_dir"
+logging_dir = "$log_dir"
+EOF
+
+cd $cwd/sd-scripts
+uv run accelerate launch sdxl_train_network.py --config_file $train_dir/config.toml
+cd $cwd

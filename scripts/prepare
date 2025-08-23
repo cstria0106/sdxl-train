@@ -1,0 +1,56 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <name> [repeats]"
+  exit 1
+fi
+
+name=$(echo "$1" | xargs)
+repeats=$(echo "${2:-4}" | xargs)
+
+cwd=$(pwd)
+images=$(realpath images/$name)
+tmp_dir=$cwd/.tmp
+train_dir=$cwd/train/${name}
+data_dir=$train_dir/data
+
+# Check repeats
+if ! [ "$repeats" -eq "$repeats" ] 2>/dev/null; then
+  echo "Repeats must be an integer"
+  exit 1
+fi
+
+if [ "$repeats" -le 0 ]; then
+  echo "Repeats must be > 0"
+  exit 1
+fi
+
+# Check images
+if [ ! -d "$images" ]; then
+  echo "Images directory not found: $images"
+  exit 1
+fi
+
+if [ -d "$data_dir" ]; then
+  echo "Data directory already exists: $data_dir"
+  exit 1
+fi
+
+# Temporary image directory
+cp -r $images $tmp_dir
+
+# Run tagger
+# cd $cwd/sd-scripts
+# uv run -m finetune.tag_images_by_wd14_tagger \
+#   $tmp_dir --remove_underscore --character_tags_first --always_first_tags 1girl,solo --onnx
+# for file in "$tmp_dir"/*.txt; do
+#   sed -i "1s/^/${name}, /" "$file"
+# done
+# cd $cwd
+
+# Copy to data directory
+mkdir -p $data_dir
+mv $tmp_dir "$data_dir/${repeats}_${name} 1girl"
+rm -rf $tmp_dir
