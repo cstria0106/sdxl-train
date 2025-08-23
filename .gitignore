@@ -1,0 +1,15 @@
+# Training
+/train
+/images
+/outputs
+*.safetensors
+*.zip
+*.tar
+/.cache
+
+# Python
+/.venv
+__pycache__
+
+# Config
+/remote.toml

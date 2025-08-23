@@ -1,0 +1,78 @@
+# 데이터/샘플링
+resolution = "1536,1536"
+enable_bucket = true
+min_bucket_reso = 1536
+max_bucket_reso = 1536
+bucket_no_upscale = true
+flip_aug = false
+random_crop = false
+
+# 반복/저장
+max_train_steps = 1000
+train_batch_size = 4
+gradient_accumulation_steps = 1
+save_every_n_steps = 100
+sample_every_n_steps = 100
+sample_sampler = "euler_a"
+
+# 최적화(Prodigy)
+optimizer_type = "Prodigy"
+learning_rate = 1.0
+lr_scheduler = "cosine"
+lr_warmup_steps = 0
+optimizer_args = [
+    "decouple=True",
+    "weight_decay=0.01",
+    "d_coef=1.0",
+    "betas=0.9,0.99",
+    "use_bias_correction=True",
+    "safeguard_warmup=True",
+]
+
+# LyCORIS(LoCon)
+network_module = "lycoris.kohya"
+network_args = [
+    "preset=full",
+    "algo=locon",
+    "conv_dim=64",
+    "conv_alpha=64",
+    "dora_wd=True",
+    "rank_dropout=0.05",
+    "module_dropout=0.05",
+    "train_norm=False",
+]
+network_dim = 64
+network_alpha = 64
+
+# 학습 범위
+train_text_encoder = false
+network_train_unet_only = true
+
+# 손실/노이즈/스케줄
+loss_type = "l2"
+min_snr_gamma = 5.0
+noise_offset = 0.1
+noise_offset_random_strength = true
+
+# 텍스트/캡션
+caption_extension = ".txt"
+keep_tokens = 3
+clip_skip = 2
+
+# 프라이어/정규화
+with_prior_preservation = false
+prior_loss_weight = 0
+
+# 성능/메모리
+mixed_precision = "bf16"
+full_bf16 = false
+sdpa = true
+xformers = false
+gradient_checkpointing = true
+cache_latents = true
+cache_text_encoder_outputs = true
+
+# 기타
+save_model_as = "safetensors"
+save_precision = "bf16"
+seed = 42
